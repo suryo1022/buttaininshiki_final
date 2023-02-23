@@ -1,7 +1,7 @@
 % 非線形(RBF)
 % vec = カラーヒストグラムやBoFなど様々
 % label = 学習データのポジティブ(1)、ネガティブ(-1)のラベル
-function classify_rate = classify_with_RBFSVM(train_data, class_data, train_label, class_label, isDCNN)
+function [classify_rate, predicted_label] = classify_with_RBFSVM(train_data, class_data, train_label, class_label, isDCNN)
     %tic;
 
     % 3倍拡張データを求める（DCNN特徴量の場合のみ）

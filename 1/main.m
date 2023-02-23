@@ -103,83 +103,106 @@ end
 
 
 % ---------------かつ丼とそばの組合せ------------------
+% 第１引数、第２引数はそれぞれ、ポジティブ画像とネガティブ画像のグループ番号
+% 1 ... かつ丼, 2 ... そば, 3 ... 牛丼
+fprintf("Katsudon - Soba\n");
 % ------ 課題1-1 カラーヒストグラムと最近傍分類 --------
-crate_histNN = calculate_classify_rate(1, 2, colorhistograms, 0, fname_imglist);
+crate_histNN = calculate_classify_rate(1, 2, colorhistograms, 0, fname_imglist, "result_histNN1")
 % ------ 課題1-2 BoFベクトルと非線形SVM --------
-crate_BoFRBFSVM = calculate_classify_rate(1, 2, BoFs, 1, fname_imglist);
-% ------ 課題1-3 DCNN特徴量と線形SVM ------
-crate_alexdcnnSVM = calculate_classify_rate(1, 2, alexdcnn, 2, fname_imglist);
+crate_BoFRBFSVM = calculate_classify_rate(1, 2, BoFs, 3, fname_imglist, "result_BoFRBFSVM1")
+% ------ 課題1-3 AlexNetDCNN特徴量と線形SVM ------
+crate_alexdcnnSVM = calculate_classify_rate(1, 2, alexdcnn, 2, fname_imglist, "result_alexdcnnSVM1")
+% ------ その他 ---------
+% ------ VGG16と線形SVM ------
+crate_VGG16LinearSVM = calculate_classify_rate(1, 2, vgg16dcnn, 2, fname_imglist, "result_VGG16LinearSVM1")
+% ------ BoFベクトルと線形SVM --------
+crate_BoFLinearSVM = calculate_classify_rate(1, 2, BoFs, 4, fname_imglist, "result_BoFLinearSVM1")
+% ------ ResNet50と線形SVM -------
+crate_ResNet50LinearSVM = calculate_classify_rate(1, 2, resnet50dcnn, 2, fname_imglist, "result_ResNet50LinearSVM1")
+% ------ DenseNet201と線形SVM ------
+crate_DenseNet201LinearSVM = calculate_classify_rate(1, 2, dense201dcnn, 2, fname_imglist, "result_DenseNet201LinearSVM1")
+% ------ VGG16と非線形SVM ------
+crate_VGG16RBFSVM = calculate_classify_rate(1, 2, vgg16dcnn, 1, fname_imglist, "result_VGG16RBFSVM1")
+% ------ ResNet50と非線形SVM -------
+crate_ResNet50RBFSVM = calculate_classify_rate(1, 2, resnet50dcnn, 1, fname_imglist, "result_ResNet50RBFSVM1")
+% ------ DenseNet201と非線形SVM ------
+crate_DenseNet201RBFSVM = calculate_classify_rate(1, 2, dense201dcnn, 1, fname_imglist, "result_DenseNet201RBFSVM1")
+
+
+% ---------------かつ丼と牛丼の組合せ------------------
+% 第１引数、第２引数はそれぞれ、ポジティブ画像とネガティブ画像のグループ番号
+% 1 ... かつ丼, 2 ... そば, 3 ... 牛丼
+fprintf("Katsudon - Gyudon\n");
+% ------ 課題1-1 カラーヒストグラムと最近傍分類 --------
+crate_histNN = calculate_classify_rate(1, 3, colorhistograms, 0, fname_imglist, "result_histNN2")
+% ------ 課題1-2 BoFベクトルと非線形SVM --------
+crate_BoFRBFSVM = calculate_classify_rate(1, 3, BoFs, 3, fname_imglist, "result_BoFRBFSVM2")
+% ------ 課題1-3 AlexNetDCNN特徴量と線形SVM ------
+crate_alexdcnnSVM = calculate_classify_rate(1, 3, alexdcnn, 2, fname_imglist, "result_alexdcnnSVM2")
+% ------ その他 ---------
+% ------ VGG16と線形SVM ------
+crate_VGG16LinearSVM = calculate_classify_rate(1, 3, vgg16dcnn, 2, fname_imglist, "result_VGG16LinearSVM2")
+% ------ BoFベクトルと線形SVM --------
+crate_BoFLinearSVM = calculate_classify_rate(1, 3, BoFs, 4, fname_imglist, "result_BoFLinearSVM2")
+% ------ ResNet50と線形SVM -------
+crate_ResNet50LinearSVM = calculate_classify_rate(1, 3, resnet50dcnn, 2, fname_imglist, "result_ResNet50LinearSVM2")
+% ------ DenseNet201と線形SVM ------
+crate_DenseNet201LinearSVM = calculate_classify_rate(1, 3, dense201dcnn, 2, fname_imglist, "result_DenseNet201LinearSVM2")
+% ------ VGG16と非線形SVM ------
+crate_VGG16RBFSVM = calculate_classify_rate(1, 3, vgg16dcnn, 1, fname_imglist, "result_VGG16RBFSVM2")
+% ------ ResNet50と非線形SVM -------
+crate_ResNet50RBFSVM = calculate_classify_rate(1, 3, resnet50dcnn, 1, fname_imglist, "result_ResNet50RBFSVM2")
+% ------ DenseNet201と非線形SVM ------
+crate_DenseNet201RBFSVM = calculate_classify_rate(1, 3, dense201dcnn, 1, fname_imglist, "result_DenseNet201RBFSVM2")
+
 
 
 %%%%%%%%% 関数定義群 %%%%%%%%%%%
 % (1, 2, colorhistograms, 1, fname_imglist)の場合、カラーヒストグラム、NNで分類
 % typeの意味
 % 0 : 最近傍分類による分類
-% 1 : 非線形SVMによる分類
-% 2 : 線形SVMによる分類
-function crate = calculate_classify_rate(i_pos, i_neg, data, type, fname_imglist)
+% 1 : 非線形SVMによる分類(データはDCNN特徴量)
+% 2 : 線形SVMによる分類(データはDCNN特徴量)
+% 3 : 非線形SVMによる分類(データはDCNN特徴量以外)
+% 4 : 線形SVMによる分類(データはDCNN特徴量以外)
+function crate = calculate_classify_rate(i_pos, i_neg, data, type, fname_imglist, fname_result)
     num_pos = size(fname_imglist{i_pos}, 2);
     positive = data((i_pos-1)*num_pos+1:i_pos*num_pos, :);
     negative = data((i_neg-1)*num_pos+1:i_neg*num_pos, :);
-    % ポジティブ画像、ネガティブ画像からそれぞれ学習データ、テストデータを作成する
-    % 5-fold cross validation
-    % (positive, negative, n個に分割, そのうちi番目の実験, ファイル名リストか否か)
-    [train_data, class_data, train_label, class_label] = n_fold_cross_validation(positive, negative, 5, 1, 0);
-    %ismember(train_data, class_data)
 
-    % 分類率を求める
-    switch type
-        case 0
-            crate = classify_with_colorhist_NN(train_data, class_data, train_label, class_label);
-        case 1
-            crate = classify_with_RBFSVM(train_data, class_data, train_label, class_label, 1);
-        case 2
-            crate = classify_with_LinearSVM(train_data, class_data, train_label, class_label, 1);
+    % n-fold cross validationによる分類率の計算
+    crates = [];
+    for i = 1:5
+        % ポジティブ画像、ネガティブ画像からそれぞれ学習データ、テストデータを作成する
+        % 5-fold cross validation
+        % (positive, negative, n個に分割, そのうちi番目の実験, ファイル名リストか否か）
+        fname_poslist = fname_imglist{i_pos};
+        fname_neglist = fname_imglist{i_neg};
+        [train_data, class_data, train_label, class_label, fname_classlist] = n_fold_cross_validation(positive, negative, fname_poslist, fname_neglist, 5, i);
+        %ismember(train_data, class_data)
+    
+        % 分類率を求める
+        switch type
+            case 0
+                [crate, plabel] = classify_with_colorhist_NN(train_data, class_data, train_label, class_label);
+            case 1
+                [crate, plabel] = classify_with_RBFSVM(train_data, class_data, train_label, class_label, 1);
+            case 2
+                [crate, plabel] = classify_with_LinearSVM(train_data, class_data, train_label, class_label, 1);
+            case 3
+                [crate, plabel] = classify_with_RBFSVM(train_data, class_data, train_label, class_label, 0);
+            case 4
+                [crate, plabel] = classify_with_LinearSVM(train_data, class_data, train_label, class_label, 0);
+        end
+
+        crates = [crates, crate];
     end
-end
-% ---------------かつ丼とそばの組合せ------------------
-% ------ 課題1-1 カラーヒストグラムと最近傍分類 --------
-function crate_histNN = colorhistogram_NN(i_pos, i_neg, colorhistograms, fname_imglist)
-    num_pos = size(fname_imglist{i_pos}, 2);
-    positive = colorhistograms((i_pos-1)*num_pos+1:i_pos*num_pos, :);
-    negative = colorhistograms((i_neg-1)*num_pos+1:i_neg*num_pos, :);
-    % ポジティブ画像、ネガティブ画像からそれぞれ学習データ、テストデータを作成する
-    % 5-fold cross validation
-    % (positive, negative, n個に分割, そのうちi番目の実験, ファイル名リストか否か)
-    [train_data, class_data, train_label, class_label] = n_fold_cross_validation(positive, negative, 5, 1, 0);
-    %ismember(train_data, class_data)
 
-    % 分類率を求める
-    crate_histNN = classify_with_colorhist_NN(train_data, class_data, train_label, class_label)
-end
+    % 分類された画像の一部を表示する
+    fpath_resultdir = "result/";
+    fpath_resultpos = fpath_resultdir + fname_result + "pos.jpg";
+    fpath_resultneg = fpath_resultdir + fname_result + "neg.jpg";
+    show_save_result(fname_classlist, plabel, fpath_resultpos, fpath_resultneg);
 
-
-% ------ 課題1-2 BoFベクトルと非線形SVM --------
-function crate_BoFRBFSVM = BoF_RBFSVM(i_pos, i_neg, BoFs, fname_imglist)
-    num_pos = size(fname_imglist{1}, 2);
-    positive = BoFs((i_pos-1)*num_pos+1:i_pos*num_pos, :);
-    negative = BoFs((i_neg-1)*num_pos+1:i_neg*num_pos, :);
-    % ポジティブ画像、ネガティブ画像からそれぞれ学習データ、テストデータを作成する
-    % 5-fold cross validation
-    [train_data, class_data, train_label, class_label] = n_fold_cross_validation(positive, negative, 5, 1, 0);
-    %ismember(train_data, class_data)
-
-    % 分類率を求める
-    crate_BoFRBFSVM = classify_with_RBFSVM(train_data, class_data, train_label, class_label, 0)
-end
-
-
-% ------ 課題1-3 DCNN特徴量と線形SVM ------
-% ポジティブ画像、ネガティブ画像のファイル名リスト
-function crate_alexdcnnSVM = alexdcnn_SVM(i_pos, i_neg, alexdcnn, fname_imglist)
-    num_pos = size(fname_imglist{1}, 2);
-    positive = alexdcnn((i_pos-1)*num_pos+1:i_pos*num_pos, :);
-    negative = alexdcnn((i_neg-1)*num_pos+1:i_neg*num_pos, :);
-    % ポジティブ画像、ネガティブ画像からそれぞれ学習データ、テストデータを作成する
-    % 5-fold cross validation
-    [train_data, class_data, train_label, class_label] = n_fold_cross_validation(positive, negative, 5, 1, 0);
-    %ismember(train_data, class_data)
-
-    % 分類率を求める
-    crate_alexdcnnSVM = classify_with_LinearSVM(train_data, class_data, train_label, class_label, 1)
+    crate = mean(crates);
 end
